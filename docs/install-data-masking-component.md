@@ -1,0 +1,44 @@
+# Install the data masking component
+
+Percona Server for MySQL 8.0.34 adds the data masking component. Percona Server for MySQL also has the [Data Masking plugin](install-data-masking-plugin.md). 
+
+!!! admonition "Useful link"
+
+    Compare the [data masking component and the data masking plugin](data-masking-comparison.md)
+
+Before installing the component, you must [uninstall the data masking plugin and all of the functions](install-data-masking-plugin.md#uninstall-the-plugin). The removal avoids conflicts.
+
+The component has the following parts:
+
+* A `mysql` system table used to store the terms and dictionaries
+* A `component_masking_functions` component which contains the loadable functions
+
+The `MASKING_DICTIONARIES_ADMIN` privilege may be required by some functions.
+
+## Install the component
+
+The following steps install the component:
+
+1. Create `masking_dictionaries`.
+
+```{.bash data-prompt="mysql>"}
+mysql> CREATE TABLE IF NOT EXISTS
+mysql.masking_dictionaries(
+    Dictionary VARCHAR(256) NOT NULL,
+    Term VARCHAR(256) NOT NULL,
+    UNIQUE INDEX dictionary_term_idx (Dictionary, Term),
+    INDEX dictionary_idx (Dictionary)
+) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+2. Install the data masking components and the loadable functions.
+
+```{.bash data-prompt="mysql>"}
+mysql> INSTALL COMPONENT 'file://component_masking_functions';
+```
+
+## Useful links
+
+[Uninstall the data masking component](uninstall-data-masking-component.md)
+
+[Data masking component functions](data-masking-function-list.md)
